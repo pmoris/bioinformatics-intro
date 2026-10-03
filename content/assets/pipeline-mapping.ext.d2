@@ -1,0 +1,117 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    # Terminal theme code
+    theme-id: 104
+  }
+}
+
+# grid-columns: 5
+# grid-rows: 10
+
+title: |md
+  # Read mapping
+| {near: top-center}
+
+Quality control: {
+  style: {
+    opacity: 0.8
+    stroke-dash: 3
+  }
+}
+
+# Quality control -> Read mapping.Align reads to reference: fastq
+Quality control -> Align reads to reference: fastq
+
+# Quality control -> Human read removal: fastq
+# Human read removal -> Align reads to reference: fastq
+
+# Human read removal: {
+#   style: {
+#     opacity: 0.5
+#   }
+# }
+
+# Read mapping: {
+Reference genome indexing: {
+  bwa index: {
+    shape: hexagon
+  }
+}
+
+Align reads to reference: {
+  bwa mem: {
+    shape: hexagon
+  }
+  Human read removal (WGS-only): {
+    style: {
+      opacity: 0.5
+    }
+  }
+}
+Compress, sort and index alignment: {
+  samtools sort: {
+    shape: hexagon
+  }
+  samtools index: {
+    shape: hexagon
+  }
+}
+Mark PCR duplicates: {
+  picard MarkDuplicates: {
+    shape: hexagon
+  }
+}
+# Base quality recalibration: {
+#   GATK BaseRecalibrator: {
+#     shape: hexagon
+#     style: {
+#       opacity: 0.8
+#       stroke-dash: 3
+#     }
+#   }
+#   style: {
+#     opacity: 0.8
+#     stroke-dash: 3
+#   }
+# }
+Alignment visualisation: {
+  IGV: {
+    shape: hexagon
+  }
+}
+Mapping statistics: {
+  samtools flagstat: {
+    shape: hexagon
+  }
+  picard CollectAlignmentSummaryMetrics: {
+    shape: hexagon
+  }
+}
+Reference genome indexing -> Align reads to reference: fasta*
+
+#Align reads to reference -> Compress and sort alignment: sam
+#Compress and sort alignment -> Mark PCR duplicates: bam
+#Compress and sort alignment -> Mapping statistics: bam
+Align reads to reference -> Compress, sort and index alignment: sam
+Compress, sort and index alignment -> Mark PCR duplicates: bam,bai
+Compress, sort and index alignment -> Mapping statistics: bam,bai
+
+
+# Mark PCR duplicates -> Base quality recalibration
+# Base quality recalibration -> Alignment visualisation: bam
+Mark PCR duplicates -> Alignment visualisation: bam,bai
+# }
+
+# Read mapping -> Variant calling: bam
+# Mark PCR duplicates -> Variant calling
+# Read mapping.Base quality recalibration -> Variant calling
+# Base quality recalibration -> Variant calling
+Mark PCR duplicates -> Variant calling: bam,bai
+
+Variant calling: {
+  style: {
+    opacity: 0.8
+    stroke-dash: 3
+  }
+}

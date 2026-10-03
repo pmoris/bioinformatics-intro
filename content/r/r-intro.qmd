@@ -1,0 +1,42 @@
+# R introduction
+
+::: {.callout-caution}
+We will not cover a full introduction to R in this course, but we do want to emphasise how useful it can be for many bioinformatics tasks. We've listed some helpful resources for you if you want to get started.
+:::
+
+## Self-paced workshop
+
+[Data Carpentry's Intro to R and RStudio for Genomics course](https://datacarpentry.org/genomics-r-intro/) offers an excellent introduction to R. This self-paced workshop walks through the basics of R - and its most popular IDE, RStudio - in the context of genomics. The focus lies on the basic syntax of R, wrangling tabular data using the [tidyverse](https://www.tidyverse.org/) - where we will encounter the VCF file format once again (@sec-vcf) - and visualization using [ggplot2](https://ggplot2.tidyverse.org/).
+
+The Data Carpentry workshop will sometimes refer to running RStudio in a cloud environment with pre-installed packages and files, but when going through these materials on your own, we recommend installing R and RStudio on your own machine. You can do so by following the instructions listed here:[https://rstudio-education.github.io/hopr/starting.html](https://rstudio-education.github.io/hopr/starting.html). You will also need to download the following two files, which are used throughout the workshop: [combined_tidy_vcf.csv](https://figshare.com/ndownloader/files/14632895) and [Ecoli_metadata.xlsx](https://figshare.com/ndownloader/files/39515053).
+
+If you do run into trouble installing R and RStudio on your own computer, you could instead:
+
+-  make use of the free version of Posit Cloud (formerly known as RStudio Server): https://posit.cloud/plans/free. However, note that you only receive a limited number of hours of use as a free user.
+- Alternatively, you can again make use of GitHub codespace, but you will need to select a different variant this time: [RStudio Server](https://codespaces.new/pmoris/FiMAB-bioinformatics?template=false&devcontainer_path=.devcontainer%2Frstudio%2Fdevcontainer.json).
+- As a final option, you could make use of a binder RStudio instance, such as [this one](https://mybinder.org/v2/gh/rocker-org/binder/HEAD?urlpath=rstudio).
+
+## Other R resources
+
+Here is a collection of other useful resources for learning R.
+
+- [Jenny Bryan's Stat 545](https://stat545.com/): an accessible guide to data wrangling, exploration and analysis in R. It also covers a few important aspects for newcomers related to [managing projects and treating your code as absolute rather than R's history](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/), as well as several other adjacent topics.
+- [https://r-cubed-intro.rostools.org/](https://r-cubed-intro.rostools.org/): a course with a strong focus on *reproducibility*.
+- [What They Forgot to Teach You About R](https://rstats.wtf/).
+- [Introduction to Data Science by Rafael A Irizarry](https://rafalab.dfci.harvard.edu/dsbook-part-1/): a clear overview of the most important aspects of data analysis in R, covering basic syntax, data manipulation using the tidyverse, visualizations and a few productivity tools.
+- [The Epidemiologist R Handbook](https://epirhandbook.com/en/index.html): an extensive R reference manual for various epidemiological analyses.
+    - [Applied Epi Tutorials](https://www.appliedepi.org/tutorial/): they also offer free self-paced R tutorials accessible online (requires registration). If you prefer learning in an interactive manner, then these are highly recommended. Also see [swirl - interactive tutorials in R](https://swirlstats.com/students.html).
+- [Software Carpentry's R for Reproducible Scientific Analysis workshop](https://swcarpentry.github.io/r-novice-gapminder/): this workshop goes over some of the other aspects of R that were not touched upon in the genomics workshop, e.g., data structures, loops, functions, etc.
+- [R for Data Science by Hadley Wickham](https://r4ds.hadley.nz/): this book is a bit more advanced, but it is an excellent resource nonetheless. Hadley Wickham is one of the driving behind tidyverse and the author of the amazing [*Tidy Data* paper](https://vita.had.co.nz/papers/tidy-data.pdf).
+- [The Pirate's Guide to R](https://bookdown.org/ndphillips/YaRrr/): slightly whimsical and quite thorough.
+- [R Graphics Cookbook](https://r-graphics.org/): tons of examples for almost any kind of graphical representation you can imagine.
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/): a complete guide to the grammar of ggplot2.
+- [PeterMac Data Science: Intro to R Tidyverse Course](https://pmacdasci.github.io/r-intro-tidyverse/): another introduction to the tidyverse, this time using the analysis of RNA-seq data as an example.
+
+## Cheatsheets
+
+Everyone loves cheatsheets!
+
+- [ggplot2](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf)
+- [dplyr data transformations](https://rstudio.github.io/cheatsheets/html/data-transformation.html)
+- [data tidying using tidyr and tibble](https://rstudio.github.io/cheatsheets/html/tidyr.html)

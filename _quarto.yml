@@ -1,0 +1,192 @@
+project:
+  type: book
+  output-dir: docs
+  execute-dir: project
+
+book:
+  title: "Introduction to Bioinformatics"
+  subtitle: "Unix and genomic variant calling pipelines"
+
+  author:
+    - name: Pieter Moris
+      orcid: 0000-0003-4242-4939
+      url: https://pmoris.github.io
+      email: pmoris@itg.be
+      affiliations:
+        - name: Institute of Tropical Medicine Antwerp
+          url: https://www.itg.be
+    - name: Pieter Monsieurs
+      orcid: 0000-0003-2214-6652
+      email: pmonsieurs@itg.be
+      affiliations:
+        - name: Institute of Tropical Medicine Antwerp
+          url: https://www.itg.be
+
+  date: "2026-10-05"
+  date-format: iso
+
+  # description: ...
+  # abstract: ...
+  # references: ...
+  # cover-image: cover.png
+  # downloads: [pdf,epub]
+
+  license: "CC BY 4.0"
+
+  chapters:
+    - index.qmd
+    - part: "Introduction to the Unix shell"
+      chapters:
+        - content/unix/1-unix-intro.qmd
+        - content/unix/2-unix-setup.qmd
+        - content/unix/3-unix-enter-the-shell.qmd
+        - content/unix/4-unix-navigation.qmd
+        - content/unix/5-unix-files-and-dirs.qmd
+        - content/unix/6-unix-more-commands.qmd
+        - content/unix/7-unix-redirection.qmd
+        - content/unix/8-unix-variables-loops-scripts.qmd
+    - part: "From reads to variants"
+      chapters:
+        - content/genomics/setup.qmd
+        - content/genomics/pipeline-overview.qmd
+        - content/genomics/tools-and-formats.qmd
+        - content/genomics/qc.qmd
+        - content/genomics/mapping.qmd
+        - content/genomics/variant-calling.qmd
+        - content/genomics/annotation.qmd
+    - part: "Introduction to R"
+      chapters:
+        - content/r/r-intro.qmd
+    - content/references.qmd
+
+  appendices:
+    - content/unix/appendix-unix.qmd
+
+  # references: https://quarto.org/docs/books/book-structure.html#references
+
+  back-to-top-navigation: true
+  page-navigation: true
+
+  page-footer:
+    left: |
+      &copy; [Pieter Moris](https://pmoris.github.io) - [Institute of Tropical Medicine Antwerp - Malariology Unit](https://research.itg.be/en/organisations/malariology), 2026.
+    center: |
+      Unless otherwise noted, all content on this site is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+      [![](https://mirrors.creativecommons.org/presskit/icons/cc.svg){fig-alt="CC" height=1.2em}](https://creativecommons.org/licenses/by/4.0/) [![](https://mirrors.creativecommons.org/presskit/icons/by.svg){fig-alt="BY" height=1.2em}](https://creativecommons.org/licenses/by/4.0/)
+    right: Built with [Quarto](https://quarto.org/).
+    # "Source available on [GitHub](https://github.com/)"
+
+  reader-mode: true
+
+  search:
+    location: sidebar
+    type: textbox # overlay
+    show-item-context: true
+    # https://quarto.org/docs/reference/projects/books.html#search
+
+  sidebar:
+    # https://quarto.org/docs/websites/website-navigation.html#side-navigation
+    # style: "docked"
+    style: "floating"
+    search: true
+    # background: dark
+    logo: content/assets/ITM-logo_col_rgb.png
+    logo-alt: Logo of Institute of Tropical Medicine Antwerp
+    # logo-href: https://research.itg.be/en/organisations/malariology # make logo return to the root of the page
+
+  # navbar:
+  #   search: false
+  # https://quarto.org/docs/websites/website-navigation.html#hybrid-navigation
+
+  # page-footer:
+  #     center:
+  #       - text: "About"
+  #         href: about.qmd
+  #       - text: "License"
+  #         href: license.qmd
+  #       - text: "Trademark"
+  #         href: trademark.qmd
+
+  favicon: content/assets/ITM-symbol_col_rgb.png
+  # twitter-card: true
+  site-url: https://pmoris.github.io/bioinformatics-intro/
+  repo-url: https://github.com/pmoris/bioinformatics-intro
+  repo-actions: [source, issue]
+
+toc: true
+toc-depth: 4
+toc-expand: true
+# toc-location: left
+number-sections: true
+# number-depth: 2
+
+# citation-location: margin
+reference-location: margin
+bibliography: content/references.bib
+
+appendix-style: default
+
+format:
+  html:
+    theme:
+      light: [flatly, ./styles/custom.scss]
+      dark: [darkly, ./styles/custom.scss]
+      # https://quarto.org/docs/websites/website-tools.html#dark-mode
+      # If a navbar has been specified, the toggle will appear in the top right corner of the nav bar.
+      # If there is no navbar present, but a sidebar has been specified, the toggle will appear in the same location that the sidebar tools appears (adjacent to the title or logo in the sidebar).
+      # If there is no navbar or sidebar present, the toggle will appear in the top right corner of the page.
+    highlight-style: arrow # monokai nord dracula arrow
+    mainfont: "Atkinson Hyperlegible Next"
+    # mainfont: "Source Sans 3"
+    # mainfont: 'Mulish'
+    # mainfont: 'Lato'
+    monofont: "Fira Code"
+    linestretch: 1.5
+    code-fold: true
+    html-math-method: katex
+    lightbox: true
+    # page-layout: full
+  # PrettyPDF-pdf:
+  #   documentclass: scrreprt
+  #   keep-tex: true
+  #   include-in-header:
+  #     text: |
+  #       \usepackage{fvextra}
+  #       \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+  #   include-before-body:
+  #     text: |
+  #       \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+  #         showspaces = false,
+  #         showtabs = false,
+  #         breaksymbolleft={},
+  #         breaklines
+  #       }
+  # pdf:
+  #   # documentclass: scrreprt
+  #   documentclass: scrbook
+  #   keep-tex: true
+  # include-in-header:
+  #   text: |
+  #     \usepackage{fvextra}
+  #     \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+  # include-before-body:
+  #   text: |
+  #     \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+  #       showspaces = false,
+  #       showtabs = false,
+  #       breaksymbolleft={},
+  #       breaklines
+  #     }
+  # epub:
+  #   toc: true
+
+strip-comments: true
+
+editor: source
+
+# https://quarto.org/docs/publishing/github-pages.html#freezing-computations
+execute:
+  freeze: auto
+
+language:
+  title-block-author-plural: "Teaching team and organising committee"

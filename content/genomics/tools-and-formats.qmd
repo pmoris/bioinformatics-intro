@@ -1,0 +1,70 @@
+# Bioinformatics tools and file formats
+
+Below we have created a list of the various tools that are used for the steps in this pipeline. As a disclaimer: a common occurrence in bioinformatics is that several different approaches have been developed for a particular task or analysis, leading to a large (and sometimes confusing) ecosystem of different software tools, each with their own advantages, disadvantages and learning curve. In the course we will try to focus on one representative tool for each task, but be aware that these are not the only ones and there might exist more suitable options depending on your data and use cases.
+
+<!-- ## File formats
+
+![](https://imgs.xkcd.com/comics/standards.png) -->
+
+::: {.callout}
+
+We have also compiled a few other resources that give an overview of the the various bioinformatics file formats used in genomics:
+
+- [https://rnnh.github.io/bioinfo-notebook/docs/file_formats.html](https://rnnh.github.io/bioinfo-notebook/docs/file_formats.html)
+- [https://eriqande.github.io/eca-bioinf-handbook/bioinformatic-file-formats.html](https://eriqande.github.io/eca-bioinf-handbook/bioinformatic-file-formats.html)
+- [https://linsalrob.github.io/ComputationalGenomicsManual/SequenceFileFormats/](https://linsalrob.github.io/ComputationalGenomicsManual/SequenceFileFormats/)
+- [https://www.hadriengourle.com/tutorials/file_formats](https://www.hadriengourle.com/tutorials/file_formats)
+
+:::
+
+### FASTA: Biological sequences
+
+> File extension: generally `.fasta`, `.fas` or `.fa`, but `.fna` (**F**ASTA **n**ucleic **a**cids), `.faa` (**F**ASTA **a**mino **a**cids) and `.frn` ((**F**ASTA non-coding **RN**A)) are also used. After indexing with `bwa`, there are additional `.{amb,ann,bwt,pac,sa}` files.
+
+- @sec-fastq-in-depth
+- \(@sec-fasta\)
+
+### FASTQ: Sequence reads and qualities
+
+> File extension: `.fq` or `.fastq`. (generally compressed with `.gzip`)
+
+- @sec-fastq-in-depth
+- \(@sec-fastq\)
+
+### SAM / BAM: Sequence alignments
+
+> File extensions:
+>
+> - `.sam`: alignment in plain text format
+> - `.bam`: binary version of SAM file
+> - `.bai`: index file for BAM file
+
+- @sec-sam-format
+- @sec-bam-format
+- @sec-alignment
+- [Learning the BAM format page by Dave Tang](https://davetang.github.io/learning_bam_file/)
+
+### VCF: Variant calls
+
+> File extensions:
+>
+> - `.vcf`: variant calls in plain text format (generally compressed with `.gzip`)
+> - `g.vcf`: variant calls in plain text format for a single sample
+
+- @sec-vcf
+- @sec-variant-calling
+- [Learning the VCF page by Dave Tang](https://davetang.github.io/learning_vcf_file/)
+
+<!-- ### BED / GFF -->
+
+## Tools
+
+- FastQC: @sec-fastqc
+- FastQ Screen: @sec-fastqscreen
+- MultiQC: @tip-multiqc
+- Trimmomatic: @sec-trimming
+- BWA: @sec-alignment
+- samtools: @sec-samtools, @sec-samtools-index and @sec-samtools-flagstat
+- picard: @sec-picard-duplicates and @sec-picard-metrics
+- GATK: @sec-variant-calling
+- IGV: @sec-alignment-visualisation and @sec-vcf-visualisation

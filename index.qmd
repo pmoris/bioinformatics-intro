@@ -1,0 +1,30 @@
+# About {.unnumbered}
+
+Welcome to the introductory bioinformatics course for INRB researchers, taught by the Malariology unit of the [Institute of Tropical Medicine Antwerp](https://www.itg.be/en/). Our goal is to strengthen bioinformatics literacy among our partners and focus on a basic introduction to unix environments, followed by an overview of the steps that make up a genomics variant calling pipeline.
+
+These course materials were previously used in the Bioinformatics Module of the Fighting Malaria Across Borders (FiMAB) [International Training Programme](https://pmoris.github.io/FiMAB-bioinformatics/) (taught in Antwerp and funded by [VLIR-UOS](https://www.vliruos.be/get-funded/calls/international-training-programme-2024)), and two FA5-funded courses taught at AHRI in Ethopia ([basic](https://cuypers-wim.github.io/FA5-bioinformatics/) and [advanced](https://ahri-itm-ua.github.io/FA5-advanced-bioinformatics-course-2026/)).
+
+## Scope of the course
+
+1. Introduction to the Unix shell
+3. Overview of genomics pipeline
+3. Introduction to R (list of resources for self-study)
+4. Population genetics and molecular surveillance in _Plasmodium_ (separate materials for second week module)
+
+Section 1 and 2 will be the focus of this iteration of the course. Section 3 is included as a list of resources for self-study for those who are interested. Section 4 is the second module for those that are enrolled in the malaria molecular surveillance course too.
+
+We hope that this course can teach you a few computational thinking and problem solving skills that will help you along your bioinformatics journey. The learning curve in computational biology can be quite steep at times and the path is littered with arcane commands and obtuse syntax, but as you practice the concepts introduced in this course on your own, your command-line efficiency will improve and you will start to spot similarities across different types of environments and languages. Through this course, we hope to arm you with the necessary skills to make tasks like running custom analysis scripts or installing bioinformatics software seem a little less daunting.
+
+## Computational thinking
+
+We hope that this course can teach you a few computational thinking and problem solving skills that will help you along your bioinformatics journey. The learning curve in computational biology can be quite steep at times and the path is littered with arcane commands and obtuse syntax, but as you practice the concepts introduced in this course on your own, your command-line efficiency will improve and you will start to spot similarities across different types of environments and languages. Through this course, we hope to arm you with the necessary skills to make tasks like running custom analysis scripts or installing bioinformatics software seem a little less daunting, and enough knowledge and experience to be able to explore more advanced topics on your own.
+
+# Acknowledgements {.unnumbered}
+
+These materials were based on previous work by Pieter Moris ([International Training Progamme - Fighting Malaria Across Borders - Bioinformatics Module](https://pmoris.github.io/FiMAB-bioinformatics/) - [![DOI](https://zenodo.org/badge/727651304.svg)](https://doi.org/10.5281/zenodo.18701255) - licensed under CC BY 4.0) and the [FA5 2025 introductory course](https://cuypers-wim.github.io/FA5-bioinformatics/) (same team - licensed under CC BY 4.0).
+
+# Re-using these materials and how to cite us {.unnumbered}
+
+This work is licensed under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).  [![](https://mirrors.creativecommons.org/presskit/icons/cc.svg){fig-alt="CC" height=1em}](https://creativecommons.org/licenses/by/4.0/) [![](https://mirrors.creativecommons.org/presskit/icons/by.svg){fig-alt="BY" height=1em}](https://creativecommons.org/licenses/by/4.0/)
+
+This (loosely-speaking) means that you are free to copy, redistribute or adapt any of the primary content on this website and in the git repository as you see fit, provided that you give us appropriate credit. Ideally, you do this by citing the Zenodo DOI (_url to be included here after initial release_). Please make sure to also provide proper attribution to the primary sources that we cite ourselves, whenever this is applicable.

@@ -1,0 +1,451 @@
+# Alignment to reference genome
+
+The next step of our pipeline tries to align the filtered and trimmed reads to the reference genome of the organism we're studying. It starts from the processed `FASTQ` files and produces `SAM` and `BAM` files, which contain the mapped reads. We encountered these file formats before in @sec-sam-format and @sec-bam-format, but we will go a bit more in-depth now. Two other important aspects in this part of the pipeline are indexing the reference genome and filtering out PCR duplicates from our alignment.
+
+![](../assets/pipeline-mapping.svg){.no-lightbox}
+
+<!-- ![](../assets/pipeline-mapping.ext.svg){.no-lightbox} -->
+
+::: {#tip-reproducibility .callout-tip}
+## Reproducibility and organized projects
+
+To make your analyses more reproducible, and to be able to figure out what you did in the (distant) future, it is important to use meaningful file names and to organise all of your data, scripts and accompanying files (like metadata and readme files, see @tip-reproducibility-2). During these hands-on sessions, try to already think about naming conventions and a clear hierarchy of your files and directories.
+
+We will write separate scripts for each of the different parts of the pipeline, but at the very end, we can try to merge them into just a handful scripts for each of the major conceptual steps, optionally accompanied by a master script to govern them all.
+
+As a last tip, try to be aware of the types of paths that you use when writing your scripts: absolute or relative ones (@sec-linux-paths).
+
+Relative paths are more portable than absolute ones (which will not work on a different workstation with different file paths), but they can be more prone to errors. Indeed, the relative path is defined based on where call the script from, rather than the location of the script itself, so be mindful of this.^[An alternative is to make use of relative paths, but in that case the script still needs to be called from a fixed location in your project folders (or you need to make use of [this strategy](https://stackoverflow.com/a/246128)). For even more complex scripts, you might want to look into providing paths as an argument, or to make use of configuration or samplesheets (as is done by more complex workflow manager tools).]
+
+Whichever type you use, we recommend to define all important files and folders at the top of your scripts as variables. This makes it easier to change them at a later time.
+
+You can already compare the basic and extended versions of some of the example scripts stored in the `./training/scripts` directory to see how you can extend a simple script to make it more robust and reusable (and hopefully clear).
+
+:::
+
+## Where to find your reference genomes - `bwa mem`
+
+We already downloaded a reference genome from [PlasmoDB](https://plasmodb.org/plasmo/app/downloads) in @sec-plasmodb (where we introduced the `wget` command). These reference genomes allow us to compare the samples we have collected with a representative reference type_of the organism that we're studying[^reference-genome]. For some organisms, multiple reference genomes exist (e.g., because the organism exhibits a lot of genetic variability between different geographic locations), and these references also receive updates from time to time, as the assemblies of complex regions improves (e.g., gaps spanned, repetitive regions mapped, or in the case of _Plasmodium_, the polymorphic subtelomeric regions).
+
+[^reference-genome]: In practice, reference genomes rarely contain the genetic material of a single individual. Instead, they tend to be a mosaic of DNA sequences from different sources. See [https://en.wikipedia.org/wiki/Reference_genome](https://en.wikipedia.org/wiki/Reference_genome).
+
+::: {.callout-caution}
+## Exercise
+
+- Download the most recent releases of the  _P. falciparum_ 3D7 and the _P. vivax_ P01 reference genomes and store them in `./data/references` in clearly labelled subdirectories.
+- Try to inspect the file using `head` and `less`.
+
+:::
+
+## Indexing a reference genome
+
+Before we can map our reads to a reference genome, we need to create an index to allow our mapper to more efficiently search through the (usually rather large) FASTA file[^fasta-refresher]. You can think of it like the index or table of contents of a book (if that particular book contained about _23 million characters_ in the case of _Plasmodium falciparum_, or _3.1 billion characters_ for the human reference genome).
+
+[^fasta-refresher]: For a refresher on the FASTA file format, check out @sec-fasta.
+
+The indexing step itself is usually performed by the same tool as the one that does the actual alignment. The index **only needs to be created once**, and then it can be re-used when mapping each of our FASTQ files. In this course, we will be using `bwa` - the [Burrows-Wheeler Aligner](https://github.com/lh3/bwa).
+
+<!-- TODO citation for BWA and other tools -->
+
+::: {.callout-caution}
+## Exercise
+
+- Use the `bwa index <reference.fasta>` command to create an index for both reference genomes.
+- Which files were created by the indexing step?
+
+:::
+
+<!-- TODO: add additional exercises similar to https://training.galaxyproject.org/training-material/topics/sequence-analysis/tutorials/mapping/tutorial.html#inspection-of-a-bam-file -->
+
+::: {#tip-reproducibility-2 .callout-tip}
+## Collaboration and reproducibility
+
+We'd like to mention two important related aspects of (computational) scientific workflows here: collaboration and reproducibility.
+
+1. Reference genomes and their indices take up a lot of space. In the case of larger genomes, like the human one, it also takes considerable time to produce the index. Fortunately, these files can be re-used for any future analysis - not just by you, but by others as well. That is why we recommend to store these references and their indices in a shared location on your lab's workstation, so that they become accessible to others who might benefit from them.
+
+2. To ease collaboration with others, but also with your future self, it is a good idea to keep track of the various steps you've performed in your analysis, just like you would do in a lab notebook. Of course the code and scripts that you write should be clearly named (and ideally, elaborated with clear comments), but it also fruitful to note down more nitty-gritty details on how you managed to fix a particular issue or why a specific option was chosen. In the case of reference genomes, we recommend to create a `README.md` file[^markdown] to store alongside your reference genomes, which clearly describes where you obtained them, the version/build/release, and perhaps even a code snippet to re-download and [checksum](https://genomicsaotearoa.github.io/shell-for-bioinformatics/2_download_data/) them.
+
+As a **bonus exercise**, try to create such a readme file.
+
+[^markdown]: `.md` stands for markdown, which is a popular [plain-text markup language](https://www.markdownguide.org/getting-started/) used for these kinds of tasks. You will often see people used markdown or `.txt` files to add metadata to collections of files in databases and analysis scripts or workflows on places like [GitHub](https://www.github.com).
+
+:::
+
+## Alignment to the reference genome {#sec-alignment}
+
+During mapping, the aligner tries to find a potential alignment site for each individual read (or query) in the reference genome. After aligning all the reads, we can start looking for variation in our samples compared to the reference genome and each other.
+
+There exist many different tools and algorithms for sequence alignment, each with their own strengths and weaknesses. A few examples of popular ones for DNA sequencing are [BWA](https://bio-bwa.sourceforge.net/), [bowtie2](https://bowtie-bio.sourceforge.net/bowtie2/index.shtml) and [minimap2](https://github.com/lh3/minimap2). The differences between these tools mostly lies in speed vs sensitivity, but also preferred application; i.e. long versus short reads^[You can read the author of BWA and minimap2 thoughts: [https://lh3.github.io/2018/04/02/minimap2-and-the-future-of-bwa](https://lh3.github.io/2018/04/02/minimap2-and-the-future-of-bwa)].
+
+Note that there is also an entirely different class of aligners that were developed for RNA-sequencing; these need to be _"splice-aware"_ to handle RNA reads without introns (e.g., STAR), and some of them also make use of some clever tricks for faster quantifications - so-called _pseudo-aligners_ (e.g, Kallisto and Salmon).
+
+We will use BWA as our mapping tool of choice, [as is customary](https://www.malariagen.net/wp-content/uploads/2023/11/Pf7-Details-of-bioinformatics-methods.pdf) in the field of malaria genomics [@malariagen_pf7_2023]. BWA actually comes with three different flavours of aligners, but the most recent and popular one is `bwa mem`[^bwa-mem2].
+
+[^bwa-mem2]: A [second version of `bwa mem`](https://github.com/bwa-mem2/bwa-mem2) has also been released, but while it is faster, it is more suited for running on high-performance compute clusters or in the cloud, due to the higher memory requirements.
+
+---
+
+@fig-mapping illustrates the mapping process [@Hiltemann_2023; @sequence-analysis-mapping]. Each individual read is matched against the reference. You can see that read 1 has a few mismatches in its alignment, which eventually might turn out to be single nucleotide polymorphisms (_SNP_). Similarly, for read 2 only the middle part aligns well; `bwa mem` performs a local alignment and can clip the ends of the read. The third read shows an example of an insertion and a deletion (_indel_); the read is longer in one area (`GCCA`), but shorter in another (`AC(A)TA`).
+
+![Mapping reads to a reference. [Source:@Hiltemann_2023; @sequence-analysis-mapping]](../assets/mapping.png){#fig-mapping}
+
+As we discussed in @tip-paired-end, when we are working with _paired-end sequencing data_, there is additional information available for the aligner to work with. The expected distance between forward and reverse reads that can help to span repetitive regions. For this to work, paired reads are always mapped together, which is why they also need to be provided to the mapping tool as a pair; that is why we tend to give them similar file names (`*R1.fastq`/`*_R2.fastq`), and the paired reads appear in the same order in each file. The final alignment report usually provides dedicated output on paired reads, letting us know of cases where one of the reads fails to map (_unmapped mate_) or the pair is not in the expected orientation (i.e., not pointing towards each other, see @tip-read-orientation) / too far apart (not _properly paired_) , because this is not something that you'd expect in normal circumstances, since they _should_ be derived from the same fragment of DNA.
+
+::: {#tip-read-orientation .callout-tip}
+## Orientation of forward and reverse reads during mapping
+
+_The following is based on the excellent write-up on [https://www.cureffi.org/2012/12/19/forward-and-reverse-reads-in-paired-end-sequencing/](https://www.cureffi.org/2012/12/19/forward-and-reverse-reads-in-paired-end-sequencing/)_ and _[https://seekdeep.brown.edu/illumina_paired_info.html](https://seekdeep.brown.edu/illumina_paired_info.html)_.
+
+<!-- TODO https://seekdeep.brown.edu/illumina_paired_info.html -->
+
+Recall that during sequencing-by-synthesis, the new strand is always synthesized in the 5'-3' direction (since [DNA polymerase](http://en.wikipedia.org/wiki/DNA_polymerase) walks along the template strand in the 3'-5' direction). The newly synthesized strand is what is being read out during the sequencing process, so this is what eventually ends up in our FASTQ files.
+
+For paired-end sequencing, this means eventually results in the reverse read (read 2) being in the opposite orientation of the first read (read 1); it is read from the complementary strand compared to read 1 and also in the opposite direction. Consequently, the mapping software will need to take the _reverse complement_ of read 2, to put it in the same orientation as read 1, before aligning it to the reference genome (or equivalently, try to map it to the other strand of the reference genome).
+
+![](../assets/paired-end.svg)
+
+<!-- TODO: check read-through adapter orientation for dual index sequencing -->
+<!-- https://www.biostars.org/p/103773/ -->
+
+> For Illumina paired-end sequencing, the double-stranded library fragments (= insert + adapter sequences (= anchor + read primer + index + index primer), see @fig-library-fragment-illumina) are first attached to the flow cell, but then the complementary strands (5'-3' oriented towards the flow cell) are removed. The template strand (3'-5' oriented towards the flow cell) is then used to synthesize and sequence the forward read in the 5'-3' direction, starting from read primer 1 (adjacent to the insert). Next, index 1 (I7) is sequenced in a separate reaction (using the i7 index primer). For the reverse reads, the template strand is first used to regenerate its complementary strand (which gets attached to the flow cell), and is then removed. Lastly, the read 2 primer is used to sequence the reverse read, again in the 5'-3' direction.
+>
+> If you need a refresher, you can always jump back to one of the resources on the Illumina sequencing chemistry in @sec-qc like @ClevaLab_2022_blog.
+
+:::
+
+When we call `bwa mem` without any additional arguments, we get an overview of how to use it:
+
+```bash
+Usage: bwa mem [options] <reference-genome> <R1.fastq> [R2.fastq]
+```
+
+As you can see, the second read pair file is `[optional]`, but when dealing with paired-end read data the two files need to be supplied at the same time. To do this programmatically, it is again important to use concepts like _looping over pairs of FASTQ files_ to do this efficiently (see @tip-paired-fastq-loop).
+
+By default, `bwa` will output its results straight into the terminal's standard out (see @sec-unix-streams). This is very useful once we start chaining different tools together, but for your first attempts you should provide the `-o <output_file>` flag to write everything to a file instead.
+
+`bwa mem` provides _many_ different options, but we recommend the following ones:
+
+- `-t <int>`: the number of threads to use. See @tip-parallel.
+- `-R "@RG\tID:L001\tPL:ILLUMINA\tSM:${sample}"`: defines _read groups_, which are tags to identify which reads belong together across flowcells/lanes/library preparations[^read-groups]. `${sample}` is a variable containing the sample name of the current read (pair) in a for loop.
+- `-Y`: use [soft clipping](https://medium.com/@lwy730050619/soft-clipping-vs-hard-clipping-in-read-alignment-bd0c96f47426) for [supplementary alignments](https://www.biostars.org/p/308853/).
+- `K 100000000`: makes results more [deterministic](https://github.com/CCDG/Pipeline-Standardization/issues/2).
+<!-- - `-k <int>`: minimum seed length (used for initial exact matching before extending the alignment). -->
+
+[^read-groups]: Reads groups are a [confusing subject](https://www.biostars.org/p/43897/), and [a very deep](https://gatk.broadinstitute.org/hc/en-us/articles/360035890671-Read-groups) one as well. In a nutshell, read groups are used to inform downstream tools about which reads were sequenced together in the same flowcell/lane (to differentiate between and account for technical variability between runs, and not just samples) and which reads need to be grouped because they are derived from the same sample (but stored in separate files). Fortunately, they are only required by a few downstream GATK tools, but leaving them out [can result in errors](https://gatk.broadinstitute.org/hc/en-us/articles/360035532352-Errors-about-read-group-RG-information). For a nice overview of how to define them, [see this example](https://eriqande.github.io/eca-bioinf-handbook/alignment-of-sequence-data-to-a-reference-genome-and-associated-steps.html#read-groups).
+
+Taken together, an example  would be:
+
+```bash
+bwa mem \
+    -t 2 \
+    -Y -K 100000000 \
+    -R "@RG\tID:L001\tPL:ILLUMINA\tSM:PF0080" \
+    -o "PF0080.sam" \
+    "${ref}" \
+    "${fastq_dir}/PF0080_S44_L001_R1_001.fastq.gz" \
+    "${fastq_dir}/PF0080_S44_L001_R2_001.fastq.gz"
+```
+
+Of course, there exist various other options that can be used to do things like tweak the parameters, scores and thresholds used for local alignment.
+
+::: {.callout-caution}
+## Exercise: mapping with `bwa mem`
+
+1. Map a single pair of reads to the reference genome (use the Peruvian _P. falciparum_ AmpliSeq data).
+2. Open the resulting SAM file using `less` and inspect its contents and structure.
+
+<!-- TODO mapping exercises -->
+
+:::
+
+::: {#tip-parallel .callout-tip}
+## Speeding up code through multi-threading or parallelization
+
+Some of the tasks that we are faced with as bioinformaticians can take a long time to complete, even when using modern hardware. Fortunately, some of these tasks can be parallelized. Which ones? Well, any task that consists of a specific procedure that needs to be applied to many files in the same manner, but for which the different processes are independent of one another. This is sometimes called _"embarrassingly parallel"_ and can be achieved by simply running the different tasks as the same time on multiple threads or compute cores.
+
+You could script this yourself using a tool like `parallel` (see [here for an example](https://speciationgenomics.github.io/mapping_reference/)), and it's also an important aspect of more advanced workflow managers like Nextflow, but fortunately many of the tools that we use also provide built-in multi-threading: `bwa mem`, `samtools`, `trimmomatic`, etc.
+
+:::
+
+::: {.callout-warning}
+## Host DNA contamination removal
+
+When analysing WGS data (but not AmpliSeq) it is important to remove human reads from your FASTQ files prior to mapping them to the _Plasmodium_ reference genome. There are a number of different approaches and dedicated tools to this - assigning reads to different organisms is a crucial step in [bacterial metagenomics for example](https://genomics.sschmeier.com/ngs-taxonomic-investigation/) - but one of the most common approaches for malaria genomics is to simply do a two-step mapping process with your alignment software of choice: in the first round all reads are mapped against the human reference genome. Anything that _"sticks"_ is discarded. In the second round, the remaining unmapped reads are mapped to _Plasmodium_.
+
+When depositing genetic data into public sequencing data repository like [NCBI's SRA](http://www.ncbi.nlm.nih.gov/sra) or [EMBL-EBI's ENA](http://www.ebi.ac.uk/ena/), only filtered FASTQ files should be used, to avoid any potential issues with regards to human privacy and data protection.
+
+You could try this for yourself as a bonus exercise. See [this guide](https://linsalrob.github.io/ComputationalGenomicsManual/Deconseq/) for more info on how to filter out the host/non-host reads using `samtools` after the mapping step.
+
+:::
+
+## SAM and BAM files {#sec-samtools}
+
+The output of the alignment step (using `bwa mem`) is a SAM file (see @sec-sam-format). This stands for _Sequence Alignment Map_. These are plain text files delimited with tabs, so you can view them using a text editor or a command like `less`.
+
+To save space and make the alignment quicker to index, SAM files are often converted to BAM files (@sec-bam-format), which are compressed binary versions of the alignment. These can be used by downstream tools directly, so we tend to only store the alignment in this format, even though you can no longer inspect the alignment yourself.
+
+```default
+0080_S44_L001.bam | head -n30
+@HD     VN:1.6  SO:coordinate
+@SQ     SN:Pf3D7_01_v3  LN:640851
+@SQ     SN:Pf3D7_02_v3  LN:947102
+@SQ     SN:Pf3D7_03_v3  LN:1067971
+@SQ     SN:Pf3D7_04_v3  LN:1200490
+@SQ     SN:Pf3D7_05_v3  LN:1343557
+@SQ     SN:Pf3D7_06_v3  LN:1418242
+@SQ     SN:Pf3D7_07_v3  LN:1445207
+@SQ     SN:Pf3D7_08_v3  LN:1472805
+@SQ     SN:Pf3D7_09_v3  LN:1541735
+@SQ     SN:Pf3D7_10_v3  LN:1687656
+@SQ     SN:Pf3D7_11_v3  LN:2038340
+@SQ     SN:Pf3D7_12_v3  LN:2271494
+@SQ     SN:Pf3D7_13_v3  LN:2925236
+@SQ     SN:Pf3D7_14_v3  LN:3291936
+@SQ     SN:Pf3D7_API_v3 LN:34250
+@SQ     SN:Pf3D7_MIT_v3 LN:5967
+@RG     ID:001  SM:001  PL:ILLUMINA
+@PG     ID:bwa  PN:bwa  VN:0.7.17-r1188 CL:bwa mem ../reference/PlasmoDB-67_Pfalciparum3D7_Genome.fasta PF0080_S44_L001_R1_001.fastq.gz PF0080_S44_L001_R2_001.fastq.gz -t 4 -k 30 -R @RG\tID:001\tSM:001\tPL:ILLUMINA
+@PG     ID:samtools     PN:samtools     PP:bwa  VN:1.19.2       CL:samtools sort -@ 4 -o ../../results/bwa/PF0080_S44_L001.bam
+@PG     ID:samtools.1   PN:samtools     PP:samtools     VN:1.19.2       CL:samtools view -h training/results/bwa/PF0080_S44_L001.bam
+M05795:43:000000000-CFLMP:1:2118:16821:2796     2211    Pf3D7_01_v3     35509   0       84H71M144H      =       193095  157838      AAAAAAAAAAAAAAAAAAAAAAAAAAAATTAAAAAAAAAAAAAAAAAAAAACATTAAAAAAAATAAAAAAA FFGFEGGGGGGGGGGGGGGGGGGGGGE33,@FGGBEGGGG**>CE*B**=5*;++23C+9*7C0<CD?+:*     NM:i:5  MD:Z:42T4T0T2A2A16      MC:Z:51H73M2D177M       AS:i:46 XS:i:45 RG:Z:001        SA:Z:Pf3D7_01_v3,193086,+,112M187S,60,1;Pf3D7_13_v3,2049877,-,41S32M226S,0,0;       XA:Z:Pf3D7_05_v3,+529511,87S43M6I19M144S,7;Pf3D7_13_v3,-112651,164S40M95S,0;Pf3D7_12_v3,+497450,90S35M3D19M155S,4;Pf3D7_12_v3,+100906,96S18M1D41M2I11M131S,6;Pf3D7_11_v3,-973273,152S11M1I10M2D34M91S,3;
+M05795:43:000000000-CFLMP:1:2105:5392:16351     2211    Pf3D7_01_v3     35510   12      84H70M147H      =       193086  157856      AAAAAAAAAAAAAAAAAAAAAAAAAAATTAAAAAAAAAATAAAAAAAAAACATAAAAAAAAAAAAAAAAA  AFGGGGGGGGGGGGGGGGGGGGGGG>:,,CFGGCFGGGG,,@DF9EC*>**,,,6<?,**:8/?EEE8=8      NM:i:6  MD:Z:39A1T4T0T2A11T7    MC:Z:80M4D3M1I193M      AS:i:40 XS:i:33 RG:Z:001        SA:Z:Pf3D7_01_v3,193086,+,111M190S,60,1;    XA:Z:Pf3D7_09_v3,-1458764,146S20M1I30M104S,3;
+M05795:43:000000000-CFLMP:1:1114:12861:20875    2179    Pf3D7_01_v3     67176   0       70H30M199H      Pf3D7_07_v3     405766      0       TTTTTATTTAAAACACAAAAAAAAAAAAAA  ,38,,,,,,,,,8,,,>*,,355C7<@@7@  NM:i:0  MD:Z:30 MC:Z:146M155H   AS:i:30 XS:i:0      RG:Z:001        SA:Z:Pf3D7_07_v3,405968,-,242S13M1I43M,0,2;Pf3D7_12_v3,1133014,-,159S38M102S,0,1;
+M05795:43:000000000-CFLMP:1:1119:27790:13377    145     Pf3D7_01_v3     109767  0       174S39M88S      Pf3D7_07_v3     405766      0       TGTCACACACGTAGTGTTGTGACAGTCGTATCAGTGTATTATTGTACGTCTGTTTGTTTATTATATTTTATTATTGTGTTTTTGTTATTATGTGTTGATGTGTTAACGGAGAGTGTAGAGTAAGAGGAAAGTATTTTAGTATTTTTAATATTTTTAATTTTAAAATTAAAAATTTATTTTTTTTTTTTTTTTTTTTTTTTTTTTTAAATAATTAATTTTTTTTTAAATTTGTTTTAAATTAAATTGGTTTTTTGTTTAAAAAAATTTTTATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT   )-).(-(((((()4.()))6).(((4()444.)))46.)6))-((-((.((,.()))))))))6)6)--)))),((4,(((-.))-)..)((),)),)((-)(2.(((,)()))*-***)***9**/***01**2*0*+2***2*20+3*0++++++3++++0++2*+<300+2+**CGEEGEDGGGGGGECGGEE>GGE@,D3,,,,,3,,,,,*3++,,,,,3,,,,,,,,,,8,,@,,3A+3+CCD8AFC,AB=4+,FC,4,,9,:,:@@EGEGGFGGGGGGGGGGGGGGGGGCCCCC       NM:i:0  MD:Z:39 MC:Z:128M7I119M45S      AS:i:39 XS:i:38 RG:Z:001        SA:Z:Pf3D7_09_v3,683170,-,263S38M,0,0;  XA:Z:Pf3D7_05_v3,+166830,86S38M177S,0;Pf3D7_10_v3,+448221,90S38M173S,0;Pf3D7_01_v3,-519133,169S35M97S,0;Pf3D7_07_v3,-399258,171S35M95S,0;Pf3D7_14_v3,-2709009,170S35M96S,0;
+M05795:43:000000000-CFLMP:1:2109:24931:7426     2145    Pf3D7_01_v3     134097  0       236H16M3I46M    Pf3D7_12_v3     2093554     0       AACAAAACAAAAAAAACATACAAATAAATACAAACAAAAAAAAAAAAAAAAAAAAAAACAAAAAA       .*)(,)0(77),<012(4))*)*.).).)))))5((,.(-(-((27((4(-91-(70>(4.334(   NM:i:7  MD:Z:17G3C3A31C4        MC:Z:25H276M    AS:i:33 XS:i:32 RG:Z:001        SA:Z:Pf3D7_01_v3,193086,+,111M190S,60,2;Pf3D7_06_v3,932942,-,146S29M2I29M95S,8,3;   XA:Z:Pf3D7_09_v3,+1284793,269S32M,0;Pf3D7_12_v3,-659692,4S30M267S,0;
+M05795:43:000000000-CFLMP:1:2116:28002:9063     2211    Pf3D7_01_v3     134127  18      242H33M26H      =       193113  59239       ACAAAAAAAAAAAAAAAAAAAAAAACACAAAAA       .()).(4>B9(((-7(39>91-341(3(,,6(0       NM:i:0  MD:Z:33 MC:Z:27H53M4D3M1I193M       AS:i:33 XS:i:0  RG:Z:001        SA:Z:Pf3D7_01_v3,193086,+,110M191S,60,0;Pf3D7_12_v3,448676,-,138S27M1I22M3I24M86S,0,7;
+M05795:43:000000000-CFLMP:1:1113:17834:11827    2161    Pf3D7_01_v3     137459  4       56H74M171H      =       196019  58732       TTATTGTTTTTTTTTTTATCGTTATTGTTTTTGTTATTATTATTATTGTTTTTGTTATTATTATTATTGTTTTT      9),<:2>EEB@<?;+2(0))*;+*;A987GA=;7;+++31++*7F<;**GGF?*:=,++,,+1=,>5F?8EE@;  NM:i:4  MD:Z:11A2A4T0A53        MC:Z:56H245M    AS:i:54 XS:i:50 RG:Z:001        SA:Z:Pf3D7_08_v3,1374826,+,41M9D29M231S,6,9;        XA:Z:Pf3D7_01_v3,-137459,77S80M144S,6;Pf3D7_01_v3,+196068,123S99M79S,10;
+M05795:43:000000000-CFLMP:1:1111:24375:10578    99      Pf3D7_01_v3     139572  0       84S32M185S      =       139572  32 CTTGAACCCAGGAGGTAGAGGTTGCAGTGAGCCGAGATCGCACCCCTGCACTCCAGCCTGGGGGACAGAGTGAGACTCTGTCTCAAAATAAATAAATAAATAAATAAACAAATAAAAGATAACTGTTTAATTAACAACAACGTAATAGATAGTGTGTGGCACTGATACCACCTGTAAAAATAAAATGAACAACGGTGTAAAGACCAAGAGGAGAGAAATGGAAGTGTCCTATTGTAAGCTTCTCTTACTCTACGAAAAATGGTATATTACTTAAGAATAAACTATGATAATTAAGACGGCA    CCCCCFGGGGGGGGGGGFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGCEGGGGGGGGGGGGGGGGGGGGCGGEGGGGGGGGGGDC3;DGGGGGGGGGGGG7FD9BFGGGFFFAA;>FB@FEFFBBCFCEFF>0>B>AEFEEF:5=B59FDAEFFFECEFFFCFF7<64CC4=.75)7797<)9CE))(-4-   NM:i:0  MD:Z:32     MC:Z:80S32M188S AS:i:32 XS:i:32 RG:Z:001        XA:Z:Pf3D7_06_v3,+225165,84S32M185S,0;
+M05795:43:000000000-CFLMP:1:1111:24375:10578    147     Pf3D7_01_v3     139572  0       80S32M188S      =       139572  -32AACCCAGGAGGTAGGGGTTGCAGTGAGCCGAGATCGCACCCCTGCAGTCCAGCCGGGGGGACAGAGTGAGACTCTGTCTCAAAATAAATAAATAAATAAATAAACAAATAAAAGATAACTGTTTAATTAACAACAACGTAATAGATAGTGTGTGGCACTGATACCACCTGTAAAAATAAAATGAACAACGGTGTAAAGACCAAGAGGAGAGAAATGGAAGTGTCCTATTGTAAGCTTCTCTTACTCTAAGAAAAATGGTATATTACTTAAGAATAAACTATGATAATTAAGGCTGCATTT     4,(563?;3@2;:6(:4)E7.);)5(96-0(FD>2==@:252>7)85DA8=1):):DBEED>8:*>;;::D:53:5:)@7FEDEDDEFCDE9>EEEC;7ED:099;9;+>D=C?C?96B?D7D9EBGGGD8GGFFGGCGGGGGEF8@@,GGGGGGGGGDGFFC6GGGGGGGGFGGGEGGGGGGGGCEGGGGGGCGGGGGGGGGF:GGGGGGFCGGGDGFFDGFGFGGGGGGGGGFGGGFGGGFGGGGGGEGFE9GFGGGGGGGGFFFFGGGGGGGGGFFGGFE<GFAGGGGGGGGCCCCC    NM:i:0  MD:Z:32     MC:Z:84S32M185S AS:i:32 XS:i:32 RG:Z:001        XA:Z:Pf3D7_06_v3,-225165,80S32M188S,0;
+```
+
+Aside from the header info, every other line in the SAM file corresponds to a particular read and provides information on where in the reference genome it was mapped and the quality of this mapping[^mapping-quality], alongside various other metadata (including the original Phred quality scores). This information is stored in tab-delimited fields (11 mandatory ones, followed by optional ones).
+
+[^mapping-quality]: Mapping quality is similar to the per-base quality scores we introduced in the previous chapter, but here they represent the probability of a wrong alignment of the entire read. More info [here](http://www.acgt.me/blog/2014/12/16/understanding-mapq-scores-in-sam-files-does-37-42) and [here](https://davetang.org/muse/2011/09/14/mapping-qualities/).
+
+| Col  | Field  |  Type   |           Brief description            |
+|:----:|:------:|:-------:|:--------------------------------------:|
+| 1    | QNAME  | String  | Query template NAME                    |
+| 2    | FLAG   | Int     | bitwise FLAG                           |
+| 3    | RNAME  | String  | References sequence NAME               |
+| 4    | POS    | Int     | 1- based leftmost mapping POSition     |
+| 5    | MAPQ   | Int     | MAPping Quality                        |
+| 6    | CIGAR  | String  | CIGAR string                           |
+| 7    | RNEXT  | String  | Ref. name of the mate/next read        |
+| 8    | PNEXT  | Int     | Position of the mate/next read         |
+| 9    | TLEN   | Int     | observed Template LENgth               |
+| 10   | SEQ    | String  | segment SEQuence                       |
+| 11   | QUAL   | String  | ASCII of Phred-scaled base QUALity+33  |
+
+
+::: {.callout-note}
+All details on the SAM format can be found in the format specification: [https://samtools.github.io/hts-specs/SAMv1.pdf](https://samtools.github.io/hts-specs/SAMv1.pdf).^[A more in-depth exploration of the different type of alignments that can occur (e.g., supplementary, secondary, etc.) is given in [this blogpost](https://cmdcolin.github.io/posts/2022-02-06-sv-sam).]
+
+One important column is the bitwise FLAG: it is a lookup code that can tell you (or more commonly, a software tool) whether a read was aligned, how it is oriented, if its pair was aligned, etc.
+
+|      | Bit   | Description                                                        |
+| ---- | ----- | ------------------------------------------------------------------: |
+| 1    | 0x1   | template having multiple segments in sequencing                    |
+| 2    | 0x2   | each segment properly aligned according to the aligner             |
+| 4    | 0x4   | segment unmapped                                                   |
+| 8    | 0x8   | next segment in the template unmapped                              |
+| 16   | 0x10  | SEQ being reverse complemented                                     |
+| 32   | 0x20  | SEQ of the next segment in the template being reverse complemented |
+| 64   | 0x40  | the first segment in the template                                  |
+| 128  | 0x80  | the last segment in the template                                   |
+| 256  | 0x100 | secondary alignment                                                |
+| 512  | 0x200 | not passing filters, such as platform/vendor quality controls      |
+| 1024 | 0x400 | PCR or optical duplicate                                           |
+| 2048 | 0x800 | supplementary alignment                                            |
+
+Lastly, we want to share this [convenient tool](https://broadinstitute.github.io/picard/explain-flags.html) to explain the different bitwise FLAGs. It is invaluable whenever you need to perform (or interpret) a `samtools` filtering operation.
+:::
+
+To convert a SAM to a BAM file, you can use the [samtools software](http://www.htslib.org/doc/samtools.html). `samtools` is used to convert between SAM and BAM files, but it can perform many other tasks too, like coordinate sorting, which we will talk about first.^[An amazing guide to several `samtools` tasks can be found on the [Learning the BAM format page by Dave Tang](https://davetang.github.io/learning_bam_file/).]
+
+## Coordinate sorting alignment files
+
+The reads in a SAM/BAM file can be sorted in different ways. For our needs (variant calling using GATK), we will need to sort them according to their location on the reference genome: a _coordinate-ordered_ format.
+
+The neat thing is that `samtools sort` will automatically do the conversion from SAM to BAM for us, so we can perform both steps in one go.
+
+```bash
+samtools sort -@ <number_of_threads> -o <output.bam> <input.sam>
+```
+
+Can we make things even more streamlined and combine the `bwa` mapping and `samtools` sorting steps? Turns out we can!
+
+::: {.callout-tip}
+## Chaining commands via pipes
+
+Recall what you learned in @sec-unix-streams about piping the output of one command into the input of another using the `|` operator. We can make use of this to feed the output of `bwa mem` directly into `samtools`. This allows us to forego the need to write the output to any intermediate files.^[This works out of the box, but you might encounter the syntax `command_1 | command_2 -`, where the hyphen `-` is a way of explicitly telling the second command to look at `stdin` for its input. For many tools, including `samtools`, [this is not necessary however](https://bioinformatics.stackexchange.com/questions/20773/problem-with-samtools-command-with-a-final-hyphen).]
+
+The only difference compared to before is that we now remove the `-o output.sam` option from the `bwa mem` command and that we do not provide an explicit input file to `samtools` (it is read from `stdout` directly instead).^[One final thing we could do is use `>` to write the output of `samtools` to a file directly, instead of using the `-o` flag.]
+
+```bash
+bwa mem <arguments> | samtools sort -o alignment.sort.bam
+```
+
+For clarity we use the `sorted.bam` file suffix for any sorted BAM files.
+
+:::
+
+::: {.callout-caution}
+## Exercise
+
+1. Align the same FASTQ file as you did in the previous exercise, but immediately pipe the `bwa mem` output to `samtools` for coordinate sorting and conversion to a `.bam` file.
+
+2. Compare the size of the original `.sam` and the new `.bam` file (`du -sh`).
+
+3. Modify your mapping script to immediately perform compression and sorting using the `samtools sort` command, without producing any intermediate files.
+
+:::
+
+## Inspecting BAM files {#sec-samtools-flagstat}
+
+You can read BAM files by using the `samtools view` command. By default it only outputs the tab-delimited parts of the file, but you can provide the flags `-H or `-h` to optionally show only the header or everything.
+
+Another useful command is `samtools flagstat`, which reports various mapping statistics on how well the reads aligned to your reference genome:
+
+```default
+samtools flagstat training/results/bwa/PF0097_S43_L001.bam
+104559 + 0 in total (QC-passed reads + QC-failed reads)
+95962 + 0 primary
+0 + 0 secondary
+8597 + 0 supplementary
+0 + 0 duplicates
+0 + 0 primary duplicates
+103657 + 0 mapped (99.14% : N/A)
+95060 + 0 primary mapped (99.06% : N/A)
+95962 + 0 paired in sequencing
+47981 + 0 read1
+47981 + 0 read2
+89790 + 0 properly paired (93.57% : N/A)
+94736 + 0 with itself and mate mapped
+324 + 0 singletons (0.34% : N/A)
+4246 + 0 with mate mapped to a different chr
+3834 + 0 with mate mapped to a different chr (mapQ>=5)
+```
+
+<!-- TODO: more info on mapping statistics -->
+
+<!-- TODO: coverage and depth
+
+https://www.metagenomics.wiki/tools/samtools/breadth-of-coverage
+https://genomics.sschmeier.com/ngs-mapping/#stats-with-samtools
+
+ -->
+
+::: {.callout-caution}
+## Exercises
+
+1. Explore the output of the `samtools flagstat` command. What do the different statistics mean?
+
+2. How can you store the mapping statistics in a file? What do you need to take into consideration when doing this in a for loop for multiple bam files?
+
+3. Try to write a script for processing all FASTQ files belonging to the Peruvian _P. falciparum_ AmpliSeq data in one go. You can inspect the provided scripts [`map.sh`](../../training/scripts/map.sh) and [`map-extended.sh`](../../training/scripts/map-extended.sh) for inspiration, especially with regards to file paths and structuring your code.
+
+**Bonus exercise:** do the same for the Vietnam _P. vivax_ WGS data.
+
+:::
+
+::: {.callout-tip}
+## Upping your scripting game
+
+When you're just starting out, it is fine to use simple scripts using just the concepts that you know. As you become more experienced though, and as your scripts might need to be used by others and re-use it for a longer time, you should try to focus on making them more _readable_, _robust_ and _efficient_. For the former, focus on doing things in a clear and structured way; use code comments, clear file names, split your scripts into logical chunks when necessary, provide READMEs, etc. Writing robust and efficient scripts is more like a never-ending journey, where you can pick up new techniques and ideas even after a lot of experience, and it might extend beyond the use of just bash, but into other languages or even workflow managers. You can compare the normal and the extended versions of the scripts in `./training/scripts` for some ideas.
+
+For now, knowing enough to get by, and **being careful** when trying things out, is most important. Howvever, if you decide in the future that really want to master bash, there are also several [resources](https://bertvv.github.io/cheat-sheets/Bash.html) availabe that [explain](https://mywiki.wooledge.org/BashPitfalls) some of the more common [beginner mistakes](https://flokoe.github.io/bash-hackers-wiki/scripting/newbie_traps/). Alternatively, you can look into [workflow tools](https://ricomnl.com/blog/bottom-up-bioinformatics-pipeline/) like [Nextflow](https://www.nextflow.io/) (and the [nf-core community pipelines](https://nf-co.re/)), [Snakemake](https://snakemake.github.io/) or [Makefiles](http://byronjsmith.com/make-bml/).
+
+:::
+
+### More indices {#sec-samtools-index}
+
+Like our reference FASTA files, BAM files can also be indexed to improve the performance of downstream tools that need to search for particular reads in this large file. For example, it is required for visualisation with IGV (@sec-alignment-visualisation) and variant calling with GATK (@sec-variant-calling).
+
+```bash
+samtools index alignment.sort.bam
+```
+
+::: {.callout-caution}
+## Exercise
+
+Try to create an index for one of your BAM files. Which new files are created?
+:::
+
+## Mark PCR duplicates - `picard MarkDuplicates` {#sec-picard-duplicates}
+
+::: {.callout-important}
+## PCR duplicates tagging/removal should **NOT** be performed for AmpliSeq data
+
+The library construction process for AmpliSeq results in identical fragments or duplicates for each of the targeted amplicons, hence we should not attempt to remove them.^[As a side note, in RNA-seq this duplicate removal step is also not recommended (unless unique molecular identifiers (UMIs) are used), although the number of duplicates can be used for quality control.]
+
+:::
+
+A final step in the mapping pipeline is the tagging (or removal) of PCR duplicates. These are identical sequences that can arise because of PCR steps during library preparation or because a cluster on the flow cell was erroneously detected as two separate ones^[You can read more about how PCR duplicates arise in this excellent [blog post](https://www.cureffi.org/2012/12/11/how-pcr-duplicates-arise-in-next-generation-sequencing/) by Eric Minikel.]. The overall goal of PCR duplicate removal is to reduce bias during downstream analyses (like variant detection) due to their presence.
+
+PCR duplicates are polyclonal molecules that do not represent any true biological variation, nor are they independent observations of the DNA that was present in a sample. Thus, the observed abundance of these identical reads does not accurately reflect the true abundance of the different molecules in the sample[@rochette_causes_2023]. If a particular PCR duplicate happens to be over-represented compared to other reads covering the same region of the genome, this could cause a bias in our analyses. [Just imagine what would happen](https://bioinformatics.stackexchange.com/a/2868) if during PCR amplification an error was introduced into one of the fragments. If we ended up with many PCR duplicates of this fragment, we might erroneously conclude that there is a SNP at this position because we see it occur in multiple reads. However, if we remove PCR duplicates, we will only observe the SNP in a single read, and variant detection will not mark this as a SNP due to lack of confidence (~agreement between different reads covering the same position, more on that in @sec-variant-calling).
+
+<!-- We want to remove these polyclonal molecules because they do not represent any true biological variation nor are they independent observations of the DNA in the sample.
+In other words, we try to reduce any biases during variant detection (or other downstream analyses) due to the presence of duplicate reads
+, because their observed abundance does not reflect the
+ because the presence of these polyclonal molecules can cause a bias if they happen to be over-represented.
+  because they do not provide any useful information about biological variants in our dataset.
+
+The overall goal is to reduce bias during variant detection.  -->
+
+One of the tools that we use for marking PCR duplicates is [Picard](https://broadinstitute.github.io/picard/). Picard actually provides many different functionalities, but the one that we're interested for now is `MarkDuplicates`. An in-depth explanation of how it works can be found [here](https://gatk.broadinstitute.org/hc/en-us/articles/360057439771-MarkDuplicates-Picard). After running the tool, we end up with a BAM file again, but this time with all suspected PCR duplicates marked as such. Our downstream analysis tools will take this information into account whenever relevant (e.g., when detecting variants).^[Note that removal generally is not necessary, but it can be done by passing the `-REMOVE_DUPLICATES true` flag.]
+
+::: {.callout-caution}
+## Exercises
+
+1. Try to mark all PCR duplicates for a single BAM file using the following command:
+
+```bash
+picard MarkDuplicates
+    -I alignment.sort.bam
+    -O alignment.sort.dups.bam
+    -M alignment.markeddups_metrics.txt
+```
+
+2. Run `samtools flagstat` again. What changed compared to the previous report?
+
+3. Examine and run the [`remove_dups.sh`](../../training/scripts/remove_dups.sh) script to process all files.
+
+**Bonus exercise:** Try to combine all the steps of the pipeline we have seen so far (including trimming) into a single script.
+:::
+
+::: {.callout-tip}
+## Remember to use meaningful file names
+
+You might have noticed in the example above that we continued to extend the suffix of the BAM file to indicate what has happened to it: sorting and PCR duplicate marking. This information is also kept track of in the BAM header, but it is a good habit to still look for appropriate file names whenever possible.
+:::
+
+---
+
+::: {#warning-bqsr .callout-warning}
+The pipeline that we're introducing here deviates from the GATK4 best practices in this section, because we do not introduce the concept of [base quality score recalibration (BQSR)](https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR). The basic idea here is that we want to detect and correct systematic errors made by the sequencer, by using our knowledge of known variants to model them.
+
+The above link by GATK gives an in-depth explanation on the topic, but you can also find some interesting discussions [here](https://bioinformatics.stackexchange.com/questions/321/is-there-a-point-in-recalibration-of-scores-for-variant-calling), [here](https://www.biostars.org/p/280274/) and [here](https://www.biostars.org/p/399004/) as well as some [hands-on walkthroughs here (section 6)](https://learn.gencore.bio.nyu.edu/variant-calling/pre-processing/) and [here](https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/variant_calling_gatk1/#3-base-quality-recalibration).
+
+:::
+
+## Alignment statistics {#sec-picard-metrics}
+
+We already introduced the `samtools flagstat` command to report on basic alignment statistics, but a more in-depth method of inspecting your alignment is provided by [Picard's `CollectAlignmentSummaryMetrics`](https://gatk.broadinstitute.org/hc/en-us/articles/21904987074587-CollectAlignmentSummaryMetrics-Picard), or [the more extensive `CollectMultipleMetrics`](https://gatk.broadinstitute.org/hc/en-us/articles/360037594031-CollectMultipleMetrics-Picard) (we will see Picard again in the next section on PCR duplicate removal):
+
+```bash
+picard CollectAlignmentSummaryMetrics R=<reference.fasta> I=<input.sort.bam> O=<output.bam>
+```
+
+The output of these tools can again be aggregated using a tool like MulitQC. See [here](https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/files/multiqc_report.html) for an example.
+
+<!-- TODO: example multiQC output -->
+
+<!-- TODO expand Genome visualisation -->
+
+## Alignment visualisation {#sec-alignment-visualisation}
+
+After creating and filtering our alignment files, we can visualise them in a tool like [IGV (Integrative Genomics Viewer)](https://igv.org/). We refer to [this section](https://training.galaxyproject.org/training-material/topics/sequence-analysis/tutorials/mapping/tutorial.html#visualization-using-a-genome-browser-igv) of the Galaxy training materials [@Hiltemann_2023; @sequence-analysis-mapping].
+
+
+<!-- TODO: add info on coverage and read depth -->

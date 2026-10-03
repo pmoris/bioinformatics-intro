@@ -1,0 +1,66 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    # Terminal theme code
+    theme-id: 104
+  }
+}
+
+# grid-columns: 5
+# grid-rows: 10
+
+title: |md
+  # Variant calling
+| {near: top-center}
+
+Read mapping: {
+  shape: rectangle
+  width: 130
+  style: {
+    opacity: 0.8
+    stroke-dash: 3
+  }
+}
+
+Read mapping -> Haplotype calling (per sample): bam
+
+Haplotype calling (per sample): {
+  GATK HaplotypeCaller: {
+    shape: hexagon
+  }
+}
+
+Haplotype calling (per sample) -> Merge GVCFs: g.vcf
+
+Merge GVCFs: {
+  GATK CombineGVCFs: {
+    shape: hexagon
+  }
+}
+
+Merge GVCFs -> Joint genotyping: g.vcf
+
+Joint genotyping: {
+  GATK GenotypeGVCFs: {
+    shape: hexagon
+  }
+}
+
+Joint genotyping -> Variant filtering: vcf
+
+Variant filtering: {
+  GATK VariantRecalibrator / VariantRecalibrator: {
+    shape: hexagon
+  }
+  GATK VariantFiltration: {
+    shape: hexagon
+  }
+}
+
+Variant filtering -> Variant annotation: vcf
+
+Variant annotation: {
+  SnpEff: {
+    shape: hexagon
+  }
+}

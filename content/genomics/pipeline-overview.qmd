@@ -1,0 +1,57 @@
+# Pipeline overview
+
+<!-- Bioinformatics tools and formats used in genomics and next-generation sequencing -->
+
+## Overview of variant calling pipeline
+
+The chart below provides a high-level overview of the different steps involved in the processing of genomic data. In the following chapter we will focus on the variant calling pipeline, which deals with:
+
+- Assessing the quality of sequence reads and filtering if necessary.
+- Aligning the reads to a reference genome - this is also referred to as _read mapping_.
+- Identify variants, i.e. where do my samples differ from the reference genome - this is known as _variant calling.
+
+In the diagram below the various tools (e.g., `bwa`, `samtools`, `gatk`) and data formats (`fastq`, `bam`, `vcf`, etc.) are depicted as well. Some of these we have already encountered in the previous chapters. You might also recall the pipeline scripts (stored in `./training/scripts`) that were mentioned in the chapter on Unix scripting. These already showcased a number of the different steps involved in the pipeline.
+
+![Variant calling pipeline](../assets/pipeline.svg){.no-lightbox}
+
+<details>
+
+<summary>A more simplified overview of the pipeline can be seen here: </summary>
+
+![Variant calling pipeline - simplified](../assets/pipeline-simplified-further.svg){.no-lightbox}
+
+</details>
+
+::: {.callout-tip}
+
+We will mostly focus on the AmpliSeq pipeline [available here](https://github.com/Ekattenberg/Plasmodium-AmpliSeq-Pipeline/tree/main) as it was introduced by @kattenberg_novel_2022 and @kattenberg_malaria_2023.
+
+For the whole-genome sequencing parts, while largely similar, we try to adhere to standard conventions established by examples like [the GATK best practices](https://gatk.broadinstitute.org/hc/en-us) and [MalariaGEN's genomic databases](https://www.malariagen.net/wp-content/uploads/2023/11/Pf7-Details-of-bioinformatics-methods.pdf) [-@malariagen_pf7_2023].
+
+:::
+
+## Additional resources
+
+We have collected a number of related resources below, which have served as an inspiration while preparing our own course:
+
+- [https://genomics.sschmeier.com/](https://genomics.sschmeier.com/)
+- [https://training.galaxyproject.org/training-material/topics/sequence-analysis/](https://training.galaxyproject.org/training-material/topics/sequence-analysis/)
+- [https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/variant_calling_gatk1/](https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/variant_calling_gatk1/)
+- [https://speciationgenomics.github.io/](https://speciationgenomics.github.io/)
+- [https://ngs-course.readthedocs.io/en/praha-november-2023/](https://ngs-course.readthedocs.io/en/praha-november-2023/)
+- [https://people.duke.edu/~ccc14/duke-hts-2018/index.html](https://people.duke.edu/~ccc14/duke-hts-2018/index.html)
+- [https://biomedicalhub.github.io/genomics/](https://biomedicalhub.github.io/genomics/)
+- [https://hbctraining.github.io/variant_analysis/schedule/self-learning.html](https://hbctraining.github.io/variant_analysis/schedule/self-learning.html)
+- [https://datacarpentry.org/wrangling-genomics/](https://datacarpentry.org/wrangling-genomics/)
+- [https://mmbdtp.github.io/modules/sequencing/week-2-programme/](https://mmbdtp.github.io/modules/sequencing/week-2-programme/)
+- [https://eriqande.github.io/eca-bioinf-handbook/overview-of-bioinformatic-analyses.html](https://eriqande.github.io/eca-bioinf-handbook/overview-of-bioinformatic-analyses.html)
+- [https://rnnh.github.io/bioinfo-notebook/#contents](https://rnnh.github.io/bioinfo-notebook/#contents)
+- [https://learn.gencore.bio.nyu.edu/](https://learn.gencore.bio.nyu.edu/)
+- [https://conmeehan.github.io/PathogenDataCourse/PathogenCourse.html](https://conmeehan.github.io/PathogenDataCourse/PathogenCourse.html)
+- [https://bio-courses1.rsb.anu.edu.au/biol3161-data/ReadsToVariants.html](https://bio-courses1.rsb.anu.edu.au/biol3161-data/ReadsToVariants.html)
+
+<!-- TODO complete section on resources and citations for everything -->
+
+The video below by Tobias Rausch \@ EMBL-EBI [@rausch_EMBL-EBI_2022] also provides an excellent overview of various topics that come up in genomic variant calling, but it is broader in scope than just AmpliSeq or molecular surveillance of parasites:
+
+{{< video https://www.youtube.com/watch?v=zO9WCOaq3aQ >}}

@@ -1,0 +1,130 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    # Terminal theme code
+    theme-id: 104
+  }
+}
+
+title: |md
+  # Overview of NGS pipeline
+| {near: top-center}
+
+Wet lab: {
+  shape: person
+  width: 130
+  icon: https://svgsilh.com/svg/41375.svg
+  icon.near: outside-right-center
+}
+
+# Wet lab: |md
+#   - DNA extraction
+#   - Sample selection
+#   - Library preparation (e.g., amplicon PCR, multiplexing, etc.)
+# |
+
+Wet lab -> Sequencing
+
+Sequencing: {
+  shape: rectangle
+  width: 130
+  icon: https://svgsilh.com/svg/371983.svg
+}
+
+Sequencing -> Bioinformatics pipeline.Quality control: fastq
+
+Bioinformatics pipeline: {
+  Quality control: {
+    FASTQC: {
+      shape: hexagon
+    }
+  }
+  Read trimming and filtering: {
+    trimmomatic: {
+      shape: hexagon
+    }
+  }
+  Reference genome: {
+    bwa index: {
+      shape: hexagon
+    }
+  }
+  Alignment to genome: {
+    Map reads: {
+      bwa mem: {
+        shape: hexagon
+      }
+    }
+    Compress and sort alignment: {
+      samtools: {
+        shape: hexagon
+      }
+    }
+    Removal of PCR duplicates: {
+      picard: {
+        shape: hexagon
+      }
+    }
+    Alignment visualisation: {
+      IGV: {
+        shape: hexagon
+      }
+    }
+  }
+
+  Variant calling: {
+    GATK4: {
+      shape: hexagon
+    }
+  }
+  Variant filtering: {
+    GATK4: {
+      shape: hexagon
+    }
+  }
+  # Joining samples
+  Genotyping: {
+    Unified
+    Joint
+  }
+
+  Quality control -> Read trimming and filtering: fastq
+  Read trimming and filtering -> Alignment to genome.Map reads.bwa mem: fastq
+  Reference genome -> Alignment to genome.Map reads.bwa mem: fasta.*
+  # Alignment to genome / mapping.bwa index -> Alignment to genome / mapping.bwa mem: fasta.*
+  # Read trimming and filtering.trimmomatic -> Alignment to genome / mapping.bwa mem: fasta.*
+  Alignment to genome.Map reads.bwa mem -> Alignment to genome.Compress and sort alignment.samtools: sam
+  Alignment to genome.Compress and sort alignment.samtools -> Alignment to genome.Removal of PCR duplicates.picard: bam
+  Alignment to genome.Removal of PCR duplicates.picard -> Variant calling: bam
+  Alignment to genome.Removal of PCR duplicates.picard -> Alignment to genome.Alignment visualisation.IGV: bam
+  Variant calling -> Variant filtering: (g)vcf
+  Variant filtering -> Genotyping: (g)vcf
+}
+
+Bioinformatics pipeline -> Downstream analyses
+
+Downstream analyses: {
+  shape: step
+  style.multiple: true
+  downstream-tools: |md
+    - R(Studio)
+    - Python
+    - Etc.
+  |
+}
+
+Downstream analyses -> Variants of interest: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Visualisation: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Linkage disequilibrium pruning: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Multi-locus lineage analysis: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Identity-by-descent analysis: {
+  style.stroke-dash: 3
+}

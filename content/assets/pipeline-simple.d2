@@ -1,0 +1,150 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    # Terminal theme code
+    theme-id: 104
+  }
+}
+
+# grid-columns: 5
+# grid-rows: 10
+
+title: |md
+  # Overview of NGS pipeline
+| {near: top-center}
+
+# explanation: |md
+#   # Wet lab
+#     - DNA extraction
+#     - Sample selection
+#     - Library preparation (e.g., amplicon PCR, multiplexing, etc.)
+# |
+# near: Wet lab
+
+Wet lab: {
+  explanation: |md
+    - DNA extraction
+    - Sample selection
+    - Library preparation (e.g., amplicon PCR, multiplexing, etc.)
+  |
+  icon: tube-icon.svg
+  icon.near: center-right
+  # near: top-center
+  # Sequencer: {
+  #   shape: rectangle
+  #   width: 130
+  #   icon: https://svgsilh.com/svg/371983.svg
+  # }
+  # explanation -> Sequencer
+}
+
+# Wet lab: {
+#   shape: person
+#   width: 130
+#   icon: https://svgsilh.com/svg/41375.svg
+#   # icon.near: outside-right-center
+# }
+
+Wet lab -> Sequencing
+
+Sequencing: {
+  shape: rectangle
+  width: 130
+  icon: dna-icon.svg
+  # near: top-center
+}
+
+Sequencing -> Bioinformatics pipeline.Quality control.Read quality control: fastq
+
+Bioinformatics pipeline: {
+  # grid-columns: 3
+  # grid-rows: 5
+
+  Quality control: {
+    Read quality control
+    Read trimming and filtering
+  }
+  Reference genome indexing: {
+    # near: Bioinformatics pipeline.Quality control
+    # near: center-right
+  }
+  Read mapping: {
+    Align reads to reference genome
+    Compress and sort alignment
+    Mark PCR duplicates
+    # Alignment visualisation: {
+    #   IGV: {
+    #     shape: hexagon
+    #   }
+    # }
+  }
+
+  Variant calling: {
+    Haplotype calling (per sample)
+
+    Haplotype calling (per sample) -> Merge GVCFs: g.vcf
+
+    Merge GVCFs
+
+    Merge GVCFs -> Joint genotyping: g.vcf
+
+    Joint genotyping
+
+    Joint genotyping -> Variant filtering: vcf
+
+    Variant filtering
+
+    Variant filtering -> Variant annotation: vcf
+
+    Variant annotation
+
+    # Variant filtering: {
+    #   style: {
+    #     opacity: 0.8
+    #     stroke-dash: 3
+    #   }
+    # }
+  }
+
+  Quality control.Read quality control -> Quality control.Read trimming and filtering: fastq
+  Quality control.Read trimming and filtering -> Read mapping.Align reads to reference genome: fastq
+  Reference genome indexing -> Read mapping.Align reads to reference genome: fasta.*
+  # Read mapping / mapping.bwa index -> Read mapping / mapping.bwa mem: fasta.*
+  # Read trimming and filtering.trimmomatic -> Read mapping / mapping.bwa mem: fasta.*
+  Read mapping.Align reads to reference genome -> Read mapping.Compress and sort alignment: sam
+  Read mapping.Compress and sort alignment -> Read mapping.Mark PCR duplicates: bam
+  Read mapping.Mark PCR duplicates -> Variant calling.Haplotype calling (per sample): bam
+  # Read mapping.Mark PCR duplicates.picard MarkDuplicates -> Read mapping.Alignment visualisation.IGV: bam
+  # Variant calling -> Variant filtering: (g)vcf
+  # Variant filtering -> Genotyping: (g)vcf
+}
+
+Bioinformatics pipeline.Variant calling.Variant annotation -> Downstream analyses: vcf
+
+Downstream analyses: {
+  # grid-columns: 5
+  # grid-rows: 1
+  shape: step
+  style.multiple: true
+  downstream-tools: |md
+    - R(Studio)
+    - Python
+    - Etc.
+  |
+}
+
+Downstream analyses -> Variants of interest: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Visualisation: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Linkage disequilibrium pruning: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Multi-locus lineage analysis: {
+  style.stroke-dash: 3
+}
+Downstream analyses -> Identity-by-descent analysis: {
+  style.stroke-dash: 3
+}

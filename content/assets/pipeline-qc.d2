@@ -1,0 +1,50 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    # Terminal theme code
+    theme-id: 104
+  }
+}
+
+# grid-columns: 5
+# grid-rows: 10
+
+title: |md
+  # Quality control and trimming
+| {near: top-center}
+
+Sequencing: {
+  shape: rectangle
+  width: 130
+  icon: dna-icon.svg
+  style: {
+    opacity: 0.8
+    stroke-dash: 3
+  }
+}
+
+Sequencing -> Quality control: fastq
+
+Quality control: {
+  FastQC: {
+    shape: hexagon
+  }
+  FastQ Screen: {
+    shape: hexagon
+  }
+}
+Read trimming and filtering: {
+  trimmomatic: {
+    shape: hexagon
+  }
+}
+
+Quality control -> Read trimming and filtering: fastq
+Read trimming and filtering -> Alignment to genome: trimmed fastq
+
+Alignment to genome: {
+  style: {
+    opacity: 0.8
+    stroke-dash: 3
+  }
+}
