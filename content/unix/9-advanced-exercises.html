@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Pipeline overview – Introduction to Bioinformatics</title>
+<title>9&nbsp; Advanced exercises – Introduction to Bioinformatics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,26 +26,42 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -55,8 +71,8 @@ div.csl-indent {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../content/genomics/tools-and-formats.html" rel="next">
-<link href="../../content/genomics/setup.html" rel="prev">
+<link href="../../content/genomics/setup.html" rel="next">
+<link href="../../content/unix/8-unix-variables-loops-scripts.html" rel="prev">
 <link href="../../content/assets/ITM-symbol_col_rgb.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -72,9 +88,6 @@ div.csl-indent {
 <link href="../../site_libs/bootstrap/bootstrap-d446dfb883f85bc788e6003cb914194f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-6f4700087931e9be1d91fb27d845b588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../../site_libs/bootstrap/bootstrap-d446dfb883f85bc788e6003cb914194f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
-<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -277,7 +290,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/genomics/setup.html">From reads to variants</a></li><li class="breadcrumb-item"><a href="../../content/genomics/pipeline-overview.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Pipeline overview</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/unix/1-unix-intro.html">Introduction to the Unix shell</a></li><li class="breadcrumb-item"><a href="../../content/unix/9-advanced-exercises.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Advanced exercises</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -380,7 +393,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../content/unix/9-advanced-exercises.html" class="sidebar-item-text sidebar-link">
+  <a href="../../content/unix/9-advanced-exercises.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Advanced exercises</span></span></a>
   </div>
 </li>
@@ -403,7 +416,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../content/genomics/pipeline-overview.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../content/genomics/pipeline-overview.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Pipeline overview</span></span></a>
   </div>
 </li>
@@ -489,18 +502,27 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#overview-of-variant-calling-pipeline" id="toc-overview-of-variant-calling-pipeline" class="nav-link active" data-scroll-target="#overview-of-variant-calling-pipeline"><span class="header-section-number">10.1</span> Overview of variant calling pipeline</a></li>
-  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources"><span class="header-section-number">10.2</span> Additional resources</a></li>
+  <li><a href="#checksums" id="toc-checksums" class="nav-link active" data-scroll-target="#checksums"><span class="header-section-number">9.1</span> Checksums</a></li>
+  <li><a href="#finding-files" id="toc-finding-files" class="nav-link" data-scroll-target="#finding-files"><span class="header-section-number">9.2</span> Finding files</a></li>
+  <li><a href="#concatenating-fastq-files" id="toc-concatenating-fastq-files" class="nav-link" data-scroll-target="#concatenating-fastq-files"><span class="header-section-number">9.3</span> Concatenating (FASTQ) files</a></li>
+  <li><a href="#redirection" id="toc-redirection" class="nav-link" data-scroll-target="#redirection"><span class="header-section-number">9.4</span> Redirection</a></li>
+  <li><a href="#running-commands-in-the-background-on-remote-servers" id="toc-running-commands-in-the-background-on-remote-servers" class="nav-link" data-scroll-target="#running-commands-in-the-background-on-remote-servers"><span class="header-section-number">9.5</span> Running commands in the background (on remote servers)</a></li>
+  <li><a href="#extract-info-from-fastq-header" id="toc-extract-info-from-fastq-header" class="nav-link" data-scroll-target="#extract-info-from-fastq-header"><span class="header-section-number">9.6</span> Extract info from FASTQ header</a></li>
+  <li><a href="#experiment-with-globbing-of-hidden-dot-files" id="toc-experiment-with-globbing-of-hidden-dot-files" class="nav-link" data-scroll-target="#experiment-with-globbing-of-hidden-dot-files"><span class="header-section-number">9.7</span> Experiment with globbing of hidden (dot) files</a></li>
+  <li><a href="#rsync" id="toc-rsync" class="nav-link" data-scroll-target="#rsync"><span class="header-section-number">9.8</span> <code>rsync</code></a></li>
+  <li><a href="#cut-and-awk" id="toc-cut-and-awk" class="nav-link" data-scroll-target="#cut-and-awk"><span class="header-section-number">9.9</span> <code>cut</code> and <code>awk</code></a></li>
+  <li><a href="#gnu-parallel" id="toc-gnu-parallel" class="nav-link" data-scroll-target="#gnu-parallel"><span class="header-section-number">9.10</span> GNU parallel</a></li>
+  <li><a href="#batch-rename" id="toc-batch-rename" class="nav-link" data-scroll-target="#batch-rename"><span class="header-section-number">9.11</span> Batch rename</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/pmoris/bioinformatics-intro/blob/main/content/genomics/pipeline-overview.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/pmoris/bioinformatics-intro/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/pmoris/bioinformatics-intro/blob/main/content/unix/9-advanced-exercises.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/pmoris/bioinformatics-intro/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/genomics/setup.html">From reads to variants</a></li><li class="breadcrumb-item"><a href="../../content/genomics/pipeline-overview.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Pipeline overview</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/unix/1-unix-intro.html">Introduction to the Unix shell</a></li><li class="breadcrumb-item"><a href="../../content/unix/9-advanced-exercises.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Advanced exercises</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Pipeline overview</span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Advanced exercises</span></h1>
 </div>
 
 
@@ -517,85 +539,82 @@ div.csl-indent {
 </header>
 
 
-<section id="overview-of-variant-calling-pipeline" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="overview-of-variant-calling-pipeline"><span class="header-section-number">10.1</span> Overview of variant calling pipeline</h2>
-<p>The chart below provides a high-level overview of the different steps involved in the processing of genomic data. In the following chapter we will focus on the variant calling pipeline, which deals with:</p>
+<p>Below we list a number of advanced exercises. You can try these once you have become more familiar with the unix shell. The exercises are purposely left vague without a lot of context nor will we give solutions, to encourage you to look up info on the tool in question in its <code>man</code> pages, <code>--help</code> text, or online, and to be creative in combining different tools, just like you would have to do when you encounter a computational challenge in the future.</p>
+<p>You can also have a look at <a href="appendix-unix.html#sec-unix-tips" class="quarto-xref"><span>Section A.1</span></a> which contains suggestions for a further deep-dive. Some of the exercises listed below might make use of some concepts listed here.</p>
+<section id="checksums" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="checksums"><span class="header-section-number">9.1</span> Checksums</h2>
+<p>TODO: link to checksum info</p>
 <ul>
-<li>Assessing the quality of sequence reads and filtering if necessary.</li>
-<li>Aligning the reads to a reference genome - this is also referred to as <em>read mapping</em>.</li>
-<li>Identify variants, i.e.&nbsp;where do my samples differ from the reference genome - this is known as _variant calling.</li>
+<li>How can you calculate the checksum of a (large) file, a group of files in a single directory?</li>
+<li>How can you compare files against a pre-calculated checksum.md5 file? How can you do this recursively for nested directories, each with their own md5 files?</li>
 </ul>
-<p>In the diagram below the various tools (e.g., <code>bwa</code>, <code>samtools</code>, <code>gatk</code>) and data formats (<code>fastq</code>, <code>bam</code>, <code>vcf</code>, etc.) are depicted as well. Some of these we have already encountered in the previous chapters. You might also recall the pipeline scripts (stored in <code>./training/scripts</code>) that were mentioned in the chapter on Unix scripting. These already showcased a number of the different steps involved in the pipeline.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="../assets/pipeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Variant calling pipeline"><img src="../assets/pipeline.svg" class="no-lightbox img-fluid figure-img" alt="Variant calling pipeline"></a></p>
-<figcaption>Variant calling pipeline</figcaption>
-</figure>
-</div>
-<details>
-<summary>
-A more simplified overview of the pipeline can be seen here:
-</summary>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="../assets/pipeline-simplified-further.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Variant calling pipeline - simplified"><img src="../assets/pipeline-simplified-further.svg" class="no-lightbox img-fluid figure-img" alt="Variant calling pipeline - simplified"></a></p>
-<figcaption>Variant calling pipeline - simplified</figcaption>
-</figure>
-</div>
-</details>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>We will mostly focus on the AmpliSeq pipeline <a href="https://github.com/Ekattenberg/Plasmodium-AmpliSeq-Pipeline/tree/main">available here</a> as it was introduced by <span class="citation" data-cites="kattenberg_novel_2022">Kattenberg et al. (<a href="../references.html#ref-kattenberg_novel_2022" role="doc-biblioref">2022</a>)</span> and <span class="citation" data-cites="kattenberg_malaria_2023">Kattenberg et al. (<a href="../references.html#ref-kattenberg_malaria_2023" role="doc-biblioref">2023</a>)</span>.</p>
-<p>For the whole-genome sequencing parts, while largely similar, we try to adhere to standard conventions established by examples like <a href="https://gatk.broadinstitute.org/hc/en-us">the GATK best practices</a> and <a href="https://www.malariagen.net/wp-content/uploads/2023/11/Pf7-Details-of-bioinformatics-methods.pdf">MalariaGEN’s genomic databases</a> <span class="citation" data-cites="malariagen_pf7_2023">(<a href="../references.html#ref-malariagen_pf7_2023" role="doc-biblioref">2023</a>)</span>.</p>
-</div>
-</div>
 </section>
-<section id="additional-resources" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="additional-resources"><span class="header-section-number">10.2</span> Additional resources</h2>
-<p>We have collected a number of related resources below, which have served as an inspiration while preparing our own course:</p>
+<section id="finding-files" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="finding-files"><span class="header-section-number">9.2</span> Finding files</h2>
 <ul>
-<li><a href="https://genomics.sschmeier.com/">https://genomics.sschmeier.com/</a></li>
-<li><a href="https://training.galaxyproject.org/training-material/topics/sequence-analysis/">https://training.galaxyproject.org/training-material/topics/sequence-analysis/</a></li>
-<li><a href="https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/variant_calling_gatk1/">https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/variant_calling_gatk1/</a></li>
-<li><a href="https://speciationgenomics.github.io/">https://speciationgenomics.github.io/</a></li>
-<li><a href="https://ngs-course.readthedocs.io/en/praha-november-2023/">https://ngs-course.readthedocs.io/en/praha-november-2023/</a></li>
-<li><a href="https://people.duke.edu/~ccc14/duke-hts-2018/index.html">https://people.duke.edu/~ccc14/duke-hts-2018/index.html</a></li>
-<li><a href="https://biomedicalhub.github.io/genomics/">https://biomedicalhub.github.io/genomics/</a></li>
-<li><a href="https://hbctraining.github.io/variant_analysis/schedule/self-learning.html">https://hbctraining.github.io/variant_analysis/schedule/self-learning.html</a></li>
-<li><a href="https://datacarpentry.org/wrangling-genomics/">https://datacarpentry.org/wrangling-genomics/</a></li>
-<li><a href="https://mmbdtp.github.io/modules/sequencing/week-2-programme/">https://mmbdtp.github.io/modules/sequencing/week-2-programme/</a></li>
-<li><a href="https://eriqande.github.io/eca-bioinf-handbook/overview-of-bioinformatic-analyses.html">https://eriqande.github.io/eca-bioinf-handbook/overview-of-bioinformatic-analyses.html</a></li>
-<li><a href="https://rnnh.github.io/bioinfo-notebook/#contents">https://rnnh.github.io/bioinfo-notebook/#contents</a></li>
-<li><a href="https://learn.gencore.bio.nyu.edu/">https://learn.gencore.bio.nyu.edu/</a></li>
-<li><a href="https://conmeehan.github.io/PathogenDataCourse/PathogenCourse.html">https://conmeehan.github.io/PathogenDataCourse/PathogenCourse.html</a></li>
-<li><a href="https://bio-courses1.rsb.anu.edu.au/biol3161-data/ReadsToVariants.html">https://bio-courses1.rsb.anu.edu.au/biol3161-data/ReadsToVariants.html</a></li>
+<li>How can you <code>find</code> all <code>.fastq</code> files in a directory and its subdirectories?</li>
+<li>How can you inspect the first line of each of them in a single command?</li>
+<li>Or rename all of them according to a specific pattern? E.g., changing the file extension.</li>
 </ul>
-<p>The video below by Tobias Rausch @ EMBL-EBI <span class="citation" data-cites="rausch_EMBL-EBI_2022">(<a href="../references.html#ref-rausch_EMBL-EBI_2022" role="doc-biblioref">Rausch 2022</a>)</span> also provides an excellent overview of various topics that come up in genomic variant calling, but it is broader in scope than just AmpliSeq or molecular surveillance of parasites:</p>
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/zO9WCOaq3aQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</section>
+<section id="concatenating-fastq-files" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="concatenating-fastq-files"><span class="header-section-number">9.3</span> Concatenating (FASTQ) files</h2>
+<p>Sometimes you will receive more than one (pair of) fastq file(s) per sample, for example when a sample was sequenced on multiple lanes of an instrument to obtain a higher number of reads. Some tools will be able to merge them for you (e.g., see <a href="../genomics/mapping.html#sec-picard-duplicates" class="quarto-xref"><span>Section 13.7</span></a>), but in other cases you’ll want to concatenate them yourself.</p>
+<p>Given a directory containing:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sample1_L001_1.fq.gz</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sample1_L001_2.fq.gz</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sample2_L001_1.fq.gz</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">sample2_L001_2.fq.gz</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">sample2_L002_1.fq.gz</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">sample2_L002_2.fq.gz</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">sample3_1.fq.gz</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">sample3_2.fq.gz</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>How can you:</p>
+<ul>
+<li>Concatenate the fastq files for each sample, per read pair, one by one?</li>
+<li>Do the same in a single command?</li>
+<li>What differences does it make if the files are <code>.gz</code> compressed or not? What strategies can you think of to handle the difference?</li>
+<li>Print a message to the screen to notify you about which file/sample is being processed?</li>
+</ul>
+<p>Similarly, given a bunch of <code>.csv</code> files, how would you concatenate all rows in them, while making sure that there is only a single header line with column names at the top of your combined file?</p>
+</section>
+<section id="redirection" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="redirection"><span class="header-section-number">9.4</span> Redirection</h2>
+<p>Explore the <code>tee</code> tool and try to store the output of a command in a file, while still printing it to the screen. What would you do if you want to store both stdout and stderr output?</p>
+</section>
+<section id="running-commands-in-the-background-on-remote-servers" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="running-commands-in-the-background-on-remote-servers"><span class="header-section-number">9.5</span> Running commands in the background (on remote servers)</h2>
+<p>Explore the difference between options to run commands in the background:</p>
+<ul>
+<li><code>command &amp;</code></li>
+<li><code>nohup command</code></li>
+<li><code>screen</code> / <code>tmux</code></li>
+</ul>
+</section>
+<section id="extract-info-from-fastq-header" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="extract-info-from-fastq-header"><span class="header-section-number">9.6</span> Extract info from FASTQ header</h2>
+<p>Which commands would you combine to extract the flowcell id from the headers in a FASTQ file. How can you check if the file contains a single identical flowcell for all of its reads?</p>
+</section>
+<section id="experiment-with-globbing-of-hidden-dot-files" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="experiment-with-globbing-of-hidden-dot-files"><span class="header-section-number">9.7</span> Experiment with globbing of hidden (dot) files</h2>
+<p>Hint: <code>.[^.]*</code></p>
+</section>
+<section id="rsync" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="rsync"><span class="header-section-number">9.8</span> <code>rsync</code></h2>
+</section>
+<section id="cut-and-awk" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="cut-and-awk"><span class="header-section-number">9.9</span> <code>cut</code> and <code>awk</code></h2>
+<p>Try to grab the second to last item from each line of a csv file using either <code>cut</code> or <code>awk</code>.</p>
+</section>
+<section id="gnu-parallel" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="gnu-parallel"><span class="header-section-number">9.10</span> GNU parallel</h2>
+<p>Try to run a simple command in parallel on multiple files.</p>
+</section>
+<section id="batch-rename" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="batch-rename"><span class="header-section-number">9.11</span> Batch rename</h2>
+<p>Write a simple loop to rename multiple files according to some fixed pattern. How can you try this out without actually running the, potentially dangerous, <code>mv</code> command?</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
-<div id="ref-kattenberg_malaria_2023" class="csl-entry" role="listitem">
-Kattenberg, Johanna Helena, Carlos Fernandez-Miñope, Norbert J. Van Dijk, et al. 2023. <span>“Malaria Molecular Surveillance in the Peruvian Amazon with a Novel Highly Multiplexed Plasmodium Falciparum <span>AmpliSeq</span> Assay.”</span> <em>Microbiology Spectrum</em> 11 (2): e00960–22. <a href="https://doi.org/10.1128/spectrum.00960-22">https://doi.org/10.1128/spectrum.00960-22</a>.
-</div>
-<div id="ref-kattenberg_novel_2022" class="csl-entry" role="listitem">
-Kattenberg, Johanna Helena, Hong Van Nguyen, Hieu Luong Nguyen, et al. 2022. <span>“Novel Highly-Multiplexed <span>AmpliSeq</span> Targeted Assay for Plasmodium Vivax Genetic Surveillance Use Cases at Multiple Geographical Scales.”</span> <em>Frontiers in Cellular and Infection Microbiology</em> 12 (August): 953187. <a href="https://doi.org/10.3389/fcimb.2022.953187">https://doi.org/10.3389/fcimb.2022.953187</a>.
-</div>
-<div id="ref-malariagen_pf7_2023" class="csl-entry" role="listitem">
-MalariaGEN, Muzamil Mahdi Abdel Hamid, Mohamed Hassan Abdelraheem, et al. 2023. <span>“Pf7: An Open Dataset of Plasmodium Falciparum Genome Variation in 20,000 Worldwide Samples.”</span> <em>Wellcome Open Research</em> 8 (January): 22. <a href="https://doi.org/10.12688/wellcomeopenres.18681.1">https://doi.org/10.12688/wellcomeopenres.18681.1</a>.
-</div>
-<div id="ref-rausch_EMBL-EBI_2022" class="csl-entry" role="listitem">
-Rausch, Tobias. 2022. <em>Methods in Genomic Variant Calling</em>. EMBL-EBI. <a href="https://doi.org/10.6019/TOL.GenomicVariantCalling-w.2022.00001.1 ">https://doi.org/10.6019/TOL.GenomicVariantCalling-w.2022.00001.1 </a>.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -1014,13 +1033,13 @@ Rausch, Tobias. 2022. <em>Methods in Genomic Variant Calling</em>. EMBL-EBI. <a 
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../content/genomics/setup.html" class="pagination-link" aria-label="Setup and preparations">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Setup and preparations</span>
+      <a href="../../content/unix/8-unix-variables-loops-scripts.html" class="pagination-link" aria-label="Variables, loops and scripts">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables, loops and scripts</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../content/genomics/tools-and-formats.html" class="pagination-link" aria-label="Bioinformatics tools and file formats">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bioinformatics tools and file formats</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../content/genomics/setup.html" class="pagination-link" aria-label="Setup and preparations">
+        <span class="nav-page-text">Setup and preparations</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1032,44 +1051,12 @@ Rausch, Tobias. 2022. <em>Methods in Genomic Variant Calling</em>. EMBL-EBI. <a 
 </div>   
     <div class="nav-footer-center">
 <p>Unless otherwise noted, all content on this site is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="height:1.2em" alt="CC"></a> <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="height:1.2em" alt="BY"></a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/pmoris/bioinformatics-intro/blob/main/content/genomics/pipeline-overview.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/pmoris/bioinformatics-intro/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/pmoris/bioinformatics-intro/blob/main/content/unix/9-advanced-exercises.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/pmoris/bioinformatics-intro/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>Built with <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 
